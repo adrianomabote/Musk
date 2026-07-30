@@ -1,0 +1,23 @@
+kind = "mobile"
+previewPath = "/"
+title = "Assistente Replit"
+version = "1.0.0"
+id = "artifacts/assistant"
+router = "expo-domain"
+
+[[services]]
+name = "expo"
+ensurePreviewReachable = "/status"
+paths = [ "/" ]
+localPort = 21484
+
+[services.development]
+run = "pnpm --filter @workspace/assistant run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/assistant", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/assistant", "run", "serve" ]
+
+[services.env]
+PORT = "21484"
+BASE_PATH = "/"
