@@ -1,15 +1,38 @@
 services:
+  # ── API Server ────────────────────────────────────────────────────────────
   - type: web
     name: replit-assistant-api
     env: node
     region: frankfurt
     plan: free
     buildCommand: npm install -g pnpm@10.26.1 && bash scripts/render-build.sh
-    startCommand: pnpm --filter @workspace/api-server run start
+    startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
     envVars:
       - key: NODE_ENV
         value: production
       - key: OPENAI_API_KEY
-        sync: false          # will be filled in on Render dashboard
+        sync: false          # fill in on Render dashboard
       - key: SESSION_SECRET
-        sync: false          # will be filled in on Render dashboard
+        sync: false          # fill in on Render dashboard
+
+  # ── Assistant (Expo landing page + QR code) ───────────────────────────────
+  - type: web
+    name: replit-assistant
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: >
+      npm install -g pnpm@10.26.1 &&
+      pnpm install --frozen-lockfile --filter "@workspace/assistant..."
+        --config.minimumReleaseAge=0 &&
+      pnpm --filter @workspace/assistant run build
+    startCommand: node artifacts/assistant/server/serve.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # URL do serviço de API acima — ajuste se o nome mudar
+      - key: EXPO_PUBLIC_API_URL
+        value: https://replit-assistant-api.onrender.com
+      # Domínio deste serviço (usado no QR code e nos manifests Expo)
+      - key: EXPO_PUBLIC_DOMAIN
+        value: replit-assistant.onrender.com
