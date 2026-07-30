@@ -8,7 +8,12 @@ if (!process.env.OPENAI_API_KEY) {
   logger.warn("OPENAI_API_KEY is not set — assistant routes will fail");
 }
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+function getOpenAI(): OpenAI {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is not configured");
+  }
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+}
 
 const SYSTEM_PROMPT = `You are Replit, a smart voice assistant for Android. You help users control their phone and answer questions.
 
@@ -72,7 +77,7 @@ router.post("/chat", async (req, res) => {
       { role: "user" as const, content: message },
     ];
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: "gpt-4o-mini",
       messages,
       max_tokens: 200,
@@ -81,7 +86,7 @@ router.post("/chat", async (req, res) => {
     const rawText = completion.choices[0]?.message?.content ?? "Desculpe, não entendi.";
     const { cleanText, action } = parseAction(rawText);
 
-    const ttsResp = await openai.audio.speech.create({
+    const ttsResp = await getOpenAI().audio.speech.create({
       model: "tts-1",
       voice: "nova",
       input: cleanText,
@@ -128,7 +133,7 @@ router.post("/voice", async (req, res) => {
 
     const file = await toFile(buffer, `audio.${ext}`, { type: mimeType });
 
-    const transcription = await openai.audio.transcriptions.create({
+    const transcription = await getOpenAI().audio.transcriptions.create({
       model: "whisper-1",
       file,
     });
@@ -145,7 +150,7 @@ router.post("/voice", async (req, res) => {
       { role: "user" as const, content: transcript },
     ];
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: "gpt-4o-mini",
       messages,
       max_tokens: 200,
@@ -154,7 +159,7 @@ router.post("/voice", async (req, res) => {
     const rawText = completion.choices[0]?.message?.content ?? "Desculpe, não entendi.";
     const { cleanText, action } = parseAction(rawText);
 
-    const ttsResp = await openai.audio.speech.create({
+    const ttsResp = await getOpenAI().audio.speech.create({
       model: "tts-1",
       voice: "nova",
       input: cleanText,
@@ -190,7 +195,7 @@ router.post("/transcribe", async (req, res) => {
     const ext = mimeType.includes("webm") ? "webm" : mimeType.includes("ogg") ? "ogg" : "m4a";
     const file = await toFile(buffer, `audio.${ext}`, { type: mimeType });
 
-    const transcription = await openai.audio.transcriptions.create({
+    const transcription = await getOpenAI().audio.transcriptions.create({
       model: "whisper-1",
       file,
     });
