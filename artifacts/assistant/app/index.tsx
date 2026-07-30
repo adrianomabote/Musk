@@ -63,7 +63,7 @@ export default function HomeScreen() {
       if (action) await executeAction(action);
     } else {
       if (!hasMicPermission) {
-        await Camera.Camera.requestPermissionsAsync?.();
+        await requestCameraPermission?.();
         return;
       }
       await startRecording();
