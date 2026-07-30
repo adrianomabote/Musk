@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: replit-assistant-api
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm install -g pnpm@10 && pnpm install --no-frozen-lockfile && pnpm --filter @workspace/api-server run build
+    startCommand: pnpm --filter @workspace/api-server run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OPENAI_API_KEY
+        sync: false          # will be filled in on Render dashboard
+      - key: SESSION_SECRET
+        sync: false          # will be filled in on Render dashboard

@@ -15,6 +15,8 @@ function makeId() {
 }
 
 function getBaseUrl(): string {
+  // EXPO_PUBLIC_API_URL is set when building for production (e.g. Render)
+  if (process.env.EXPO_PUBLIC_API_URL) return process.env.EXPO_PUBLIC_API_URL;
   const domain = process.env.EXPO_PUBLIC_DOMAIN;
   return domain ? `https://${domain}` : '';
 }

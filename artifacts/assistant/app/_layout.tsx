@@ -15,8 +15,11 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { setBaseUrl } from '@workspace/api-client-react';
 
-// Set API base URL so the Expo bundle can reach the backend outside the proxy
-setBaseUrl(`https://${process.env.EXPO_PUBLIC_DOMAIN}`);
+// Set API base URL — EXPO_PUBLIC_API_URL takes priority (Render / production)
+const _apiBase =
+  process.env.EXPO_PUBLIC_API_URL ||
+  (process.env.EXPO_PUBLIC_DOMAIN ? `https://${process.env.EXPO_PUBLIC_DOMAIN}` : '');
+setBaseUrl(_apiBase);
 
 SplashScreen.preventAutoHideAsync();
 
