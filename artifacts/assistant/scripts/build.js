@@ -148,16 +148,6 @@ async function startMetro(expoPublicDomain, expoPublicReplId) {
     console.log(`Setting EXPO_PUBLIC_REPL_ID=${expoPublicReplId}`);
   }
 
-  // Limit Node/Metro heap to 400 MB so it fits inside Render's 512 MB free tier.
-  // METRO_MAX_WORKERS=1 avoids spawning multiple transformer processes.
-  const metroEnv = {
-    ...env,
-    NODE_OPTIONS: [env.NODE_OPTIONS, '--max-old-space-size=400']
-      .filter(Boolean)
-      .join(' '),
-    METRO_MAX_WORKERS: '1',
-  };
-
   metroProcess = spawn(
     'pnpm',
     ['exec', 'expo', 'start', '--no-dev', '--minify', '--localhost'],
@@ -165,7 +155,7 @@ async function startMetro(expoPublicDomain, expoPublicReplId) {
       stdio: ['ignore', 'pipe', 'pipe'],
       detached: false,
       cwd: projectRoot,
-      env: metroEnv,
+      env,
     },
   );
 

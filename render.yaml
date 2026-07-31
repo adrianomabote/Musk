@@ -4,7 +4,6 @@ services:
     name: replit-assistant-api
     env: node
     region: frankfurt
-    plan: free
     buildCommand: npm install -g pnpm@10.26.1 && bash scripts/render-build.sh
     startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
     envVars:
@@ -20,7 +19,6 @@ services:
     name: replit-assistant
     env: node
     region: frankfurt
-    plan: free
     buildCommand: npm install -g pnpm@10.26.1 && bash scripts/render-build-assistant.sh
     startCommand: node artifacts/assistant/server/serve.js
     envVars:
