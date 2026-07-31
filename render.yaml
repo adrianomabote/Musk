@@ -21,11 +21,7 @@ services:
     env: node
     region: frankfurt
     plan: free
-    buildCommand: >
-      npm install -g pnpm@10.26.1 &&
-      pnpm install --frozen-lockfile --filter "@workspace/assistant..."
-        --config.minimumReleaseAge=0 &&
-      pnpm --filter @workspace/assistant run build
+    buildCommand: npm install -g pnpm@10.26.1 && bash scripts/render-build-assistant.sh
     startCommand: node artifacts/assistant/server/serve.js
     envVars:
       - key: NODE_ENV
